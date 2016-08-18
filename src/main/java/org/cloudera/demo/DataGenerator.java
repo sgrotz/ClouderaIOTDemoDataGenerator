@@ -23,6 +23,9 @@ import org.cloudera.demo.object.MessageElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 public class DataGenerator {
 
@@ -32,6 +35,7 @@ public class DataGenerator {
 	static int maxCount = 100;
 	static String kafkaServer="localhost:9092";
 	static String topicName = "iotDemoEvents";
+	static boolean sendAsJSON = false;
 	static ArrayList<MessageElement> me;
 	HashMap<String, Double> lastValues = new HashMap<String, Double>();
 	
@@ -63,15 +67,20 @@ public class DataGenerator {
 					e.setName(m.getName());
 					
 					if (lastValues.get(m.getName()) == null) {
+						// If there is no last value, use the average
 						Double value = (m.getMaximum() + m.getMinimum()) / 2;
 						e.setValue(value);
 						lastValues.put(m.getName(), value);
 					} else {
 						// 1 is up - 2 is down
 						int u0d = this.getRandom(1,2);
+						
+						// Make sure to only go up or down by a certain volatility
 						Double diff = m.getUnit() * this.getRandom(1, (int) m.getVolatility().doubleValue());
 						Double lv = lastValues.get(m.getName());
 						Double nv; 
+						
+						// 1 = up - 2 is down
 						if (u0d == 1) {
 							nv = lv + diff;
 						} else {
@@ -80,20 +89,26 @@ public class DataGenerator {
 						e.setValue(nv);
 						
 					}
+					
+					String content = e.toString();
 				
-				/*ObjectMapper mapper = new ObjectMapper();
-				String jsonInString = null; 
+					if (sendAsJSON) {
+						ObjectMapper mapper = new ObjectMapper();
+						
+						try {
+							content = mapper.writeValueAsString(e);
+						} catch (JsonProcessingException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+
 				
-				try {
-					 jsonInString = mapper.writeValueAsString(e);
-				} catch (JsonProcessingException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}*/
+				System.out.println("Message Content String is: " + content);
 				
-				System.out.println("Message Content String is: " + e.toString());
-		        ProducerRecord<String, String> rec = new ProducerRecord<String, String>(topicName, e.toString());
-		        //producer.send(rec);
+				// Publish message to Kafka Broker
+		        ProducerRecord<String, String> rec = new ProducerRecord<String, String>(topicName, content);
+		        producer.send(rec);
 			}
 	        
 	        logger.info("Successfully sent message " + i);
@@ -125,6 +140,7 @@ public class DataGenerator {
 			options.addOption("p", true, "Pause factor (in msecs) - after each event, pause for x msecs (default is: 500)");
 			options.addOption("x", true, "Set a max count of events to create (default: unlimited)");
 			options.addOption("t", true, "Name of the topic to publish the messages to.");
+			options.addOption("j", false, "If set, the content will be JSON encoded (default: false - csv separated)");
 			options.addOption("h", false, "Print the command line help");
 						
 			CommandLineParser parser = new BasicParser();
@@ -148,13 +164,18 @@ public class DataGenerator {
 				listOfMachines = machineList.split(",");
 			} 
 			
-			// Set the list of machines
+			// Set the kafka server
 			if (cmd.getOptionValue("k") != null)  {
 				kafkaServer = cmd.getOptionValue("k");
 			}
 			
+			// Specify the topic name
 			if (cmd.getOptionValue("t") != null)  {
 				topicName = cmd.getOptionValue("t");
+			}
+			
+			if (cmd.hasOption("j"))  {
+				sendAsJSON = true;
 			}
 
 			// Set the maxCount
@@ -197,7 +218,7 @@ public class DataGenerator {
 				System.out.println("* Setting pause factor to " + pause);
 				System.out.println("* Setting maxCount (per machine) to " + (maxCount *2));
 				System.out.println("* Pausing publishing for " + pause + " msecs, after each published event");
-				System.out.println("* Publishing to Kafka Server " + kafkaServer);
+				System.out.println("* Publishing to Kafka Server " + kafkaServer + " on topic "+ topicName);
 				System.out.println("********************************");
 				
 				Thread[] threads = new Thread[threadCount];
