@@ -5,7 +5,7 @@ import java.util.Date;
 public class EventObject {
 	
 	String ID; 
-	String maschine; 
+	String machine; 
 	Date timestamp;
 	String name;
 	Object value;
@@ -17,11 +17,11 @@ public class EventObject {
 	public void setID(String iD) {
 		ID = iD;
 	}
-	public String getMaschine() {
-		return maschine;
+	public String getMachine() {
+		return machine;
 	}
-	public void setMaschine(String maschine) {
-		this.maschine = maschine;
+	public void setMachine(String machine) {
+		this.machine = machine;
 	}
 	public Date getTimestamp() {
 		return timestamp;
@@ -43,7 +43,7 @@ public class EventObject {
 	} 
 	
 	public String toString() {
-		return this.getID() + "," + this.getMaschine() + "," + this.getTimestamp() + "," + this.getName() + "," + this.getValue();
+		return this.getID() + "," + this.getMachine() + "," + this.getTimestamp() + "," + this.getName() + "," + this.getValue();
 	}
 
 }

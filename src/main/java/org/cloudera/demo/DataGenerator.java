@@ -63,7 +63,7 @@ public class DataGenerator {
 				
 				String ID = this.getCurrentDateAsUniqueID(name);
 					e.setID(ID);
-					e.setMaschine(name);
+					e.setMachine(name);
 					e.setTimestamp(this.getCurrentDate());
 					e.setName(m.getName());
 					
@@ -105,7 +105,7 @@ public class DataGenerator {
 					}
 
 				
-				System.out.println("Message Content String is: " + content);
+				logger.debug("Message Content String is: " + content);
 				
 				// Publish message to Kafka Broker
 		        ProducerRecord<String, String> rec = new ProducerRecord<String, String>(topicName, content);
@@ -147,7 +147,7 @@ public class DataGenerator {
 			CommandLineParser parser = new BasicParser();
 			CommandLine cmd = parser.parse( options, args);
 	
-			if (args.length == 0 || cmd.hasOption("h")) {
+			if (cmd.hasOption("h")) {
 				System.out.println("*** Missing arguments: ***");
 				HelpFormatter formatter = new HelpFormatter();
 				formatter.printHelp( "runDataGenerator.sh", options );
