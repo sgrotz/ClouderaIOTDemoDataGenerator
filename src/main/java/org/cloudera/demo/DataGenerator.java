@@ -189,11 +189,7 @@ public class DataGenerator {
 				maxCount = Integer.valueOf(cmd.getOptionValue("x"));
 			} 
 			
-		
-			for (int y =0; y < listOfMachines.length; y++ ) {
-				System.out.println(listOfMachines[y].toString());	
-			}
-			
+			// Read in a configuration file
 			CompositeConfiguration config = new CompositeConfiguration();
 			
 			//config.addConfiguration(new SystemConfiguration());
@@ -203,6 +199,7 @@ public class DataGenerator {
 				
 				me = new ArrayList<MessageElement>(eventNames.size());
 				
+				// Map the events.properties to an object
 				for (int p = 0; p < eventNames.size(); p++) {
 					MessageElement m = new MessageElement();
 						m.setMinimum(Double.valueOf((String) config.getProperty(eventNames.get(p) + ".min")));
@@ -227,6 +224,8 @@ public class DataGenerator {
 				System.out.println("* Publishing to Kafka Server " + kafkaServer + " on topic "+ topicName);
 				System.out.println("********************************");
 				
+				
+				// Start a thread for each machine
 				Thread[] threads = new Thread[threadCount];
 				for (int i = 0; i < threadCount; i++ ){
 					final String machine = listOfMachines[i];
