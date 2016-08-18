@@ -1,5 +1,6 @@
 package org.cloudera.demo;
 
+import java.net.InetAddress;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -162,7 +163,12 @@ public class DataGenerator {
 			if (cmd.getOptionValue("m") != null)  {
 				String machineList = cmd.getOptionValue("m");
 				listOfMachines = machineList.split(",");
-			} 
+			} else {
+				// If no machine names are provided - add 3 host specific machine names
+				String hostname = InetAddress.getLocalHost().getHostName();
+				String machineNames = hostname + "-M1," + hostname + "-M2, " + hostname + "-M3";
+				listOfMachines = machineNames.split(",");
+			}
 			
 			// Set the kafka server
 			if (cmd.getOptionValue("k") != null)  {
