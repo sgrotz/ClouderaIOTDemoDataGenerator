@@ -51,7 +51,7 @@ public class DataGenerator {
         configProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,"org.apache.kafka.common.serialization.StringSerializer");
 
         System.out.println("Trying to connect to Kafka Broker ...");
-        Producer producer =  new KafkaProducer<String, String>(configProperties);
+        Producer<String, String> producer =  new KafkaProducer<String, String>(configProperties);
         
 		
 		for (int i = 0; i < maxCount; i++) {
