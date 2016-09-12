@@ -33,7 +33,7 @@ public class DataGenerator {
 	Logger logger = LoggerFactory.getLogger(getClass());
 	static long pause = 500;
 	static String[] listOfMachines = {"M1", "M2", "M3"};
-	static int maxCount = 100;
+	static int maxCount = 10000;
 	static String kafkaServer="localhost:9092";
 	static String topicName = "iotDemoEvents";
 	static boolean sendAsJSON = false;
@@ -41,7 +41,7 @@ public class DataGenerator {
 	HashMap<String, Double> lastValues = new HashMap<String, Double>();
 	
 	
-	public DataGenerator (String name, long pause, int maxCount, ArrayList<MessageElement> Messages) {
+	public DataGenerator (String name, String host, long pause, int maxCount, ArrayList<MessageElement> Messages) {
 		System.out.println("Thread for " + name + " started");
 		
         //Configure the Producer
@@ -64,6 +64,7 @@ public class DataGenerator {
 				String ID = this.getCurrentDateAsUniqueID(name);
 					e.setID(ID);
 					e.setMachine(name);
+					e.setHost(host);
 					e.setTimestamp(this.getCurrentDate());
 					e.setName(m.getName());
 					
@@ -139,7 +140,7 @@ public class DataGenerator {
 			options.addOption("m", true, "List of machine names to generate events for (default is: M1, M2, M3");
 			options.addOption("k", true, "Hostname or IP Address of the kafka server e.g 52.59.131.190:9092");
 			options.addOption("p", true, "Pause factor (in msecs) - after each event, pause for x msecs (default is: 500)");
-			options.addOption("x", true, "Set a max count of events to create (default: unlimited)");
+			options.addOption("x", true, "Set a max count of events to create (default: 10000)");
 			options.addOption("t", true, "Name of the topic to publish the messages to.");
 			options.addOption("j", false, "If set, the content will be JSON encoded (default: false - csv separated)");
 			options.addOption("h", false, "Print the command line help");
@@ -165,8 +166,8 @@ public class DataGenerator {
 				listOfMachines = machineList.split(",");
 			} else {
 				// If no machine names are provided - add 3 host specific machine names
-				String hostname = InetAddress.getLocalHost().getHostName();
-				String machineNames = hostname + "-M1," + hostname + "-M2, " + hostname + "-M3";
+				
+				String machineNames = "M1," + "M2, " + "M3";
 				listOfMachines = machineNames.split(",");
 			}
 			
@@ -225,6 +226,8 @@ public class DataGenerator {
 				System.out.println("********************************");
 				
 				
+				final String hostname = InetAddress.getLocalHost().getHostName();
+				
 				// Start a thread for each machine
 				Thread[] threads = new Thread[threadCount];
 				for (int i = 0; i < threadCount; i++ ){
@@ -232,7 +235,7 @@ public class DataGenerator {
 		
 					threads[i] = new Thread() {
 						public void run() {				
-							new DataGenerator(machine, pause, maxCount, me);
+							new DataGenerator(machine, hostname, pause, maxCount, me);
 						}
 					};
 					

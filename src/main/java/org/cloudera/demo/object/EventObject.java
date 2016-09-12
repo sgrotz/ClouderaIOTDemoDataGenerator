@@ -7,7 +7,8 @@ import java.util.Date;
 public class EventObject {
 	
 	String ID; 
-	String machine; 
+	String machine;
+	String host;
 	Date timestamp;
 	String name;
 	Object value;
@@ -43,9 +44,14 @@ public class EventObject {
 	public void setValue(Object value) {
 		this.value = value;
 	} 
-	
+	public String getHost() {
+		return host;
+	}
+	public void setHost(String host) {
+		this.host = host;
+	}
 	public String toString() {
-		return this.getID() + "," + this.getMachine() + "," + this.getCurrentDateAsUniqueID() + "," + this.getName() + "," + this.getValue();
+		return this.getID() + "," + this.getMachine() + ","+ this.getHost() + "," + this.getCurrentDateAsUniqueID() + "," + this.getName() + "," + this.getValue();
 	}
 	
 	private String getCurrentDateAsUniqueID() {
