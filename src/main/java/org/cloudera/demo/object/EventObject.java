@@ -1,5 +1,7 @@
 package org.cloudera.demo.object;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class EventObject {
@@ -43,7 +45,13 @@ public class EventObject {
 	} 
 	
 	public String toString() {
-		return this.getID() + "," + this.getMachine() + "," + this.getTimestamp() + "," + this.getName() + "," + this.getValue();
+		return this.getID() + "," + this.getMachine() + "," + this.getCurrentDateAsUniqueID() + "," + this.getName() + "," + this.getValue();
+	}
+	
+	private String getCurrentDateAsUniqueID() {
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+		return  sdf.format(cal.getTime()); 
 	}
 
 }
