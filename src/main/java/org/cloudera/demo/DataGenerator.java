@@ -138,6 +138,7 @@ public class DataGenerator {
 		try {
 			Options options = new Options();
 			options.addOption("m", true, "List of machine names to generate events for (default is: M1, M2, M3");
+			options.addOption("l", false, "If set - will use the hostname of the local machine - but NOT localhost");
 			options.addOption("k", true, "Hostname or IP Address of the kafka server e.g 52.59.131.190:9092");
 			options.addOption("p", true, "Pause factor (in msecs) - after each event, pause for x msecs (default is: 500)");
 			options.addOption("x", true, "Set a max count of events to create (default: 10000)");
@@ -183,6 +184,11 @@ public class DataGenerator {
 			
 			if (cmd.hasOption("j"))  {
 				sendAsJSON = true;
+			}
+			
+			if (cmd.hasOption("l"))  {
+				String hostname = InetAddress.getLocalHost().getHostName();
+				kafkaServer = hostname + ":9092";
 			}
 
 			// Set the maxCount
@@ -234,7 +240,7 @@ public class DataGenerator {
 					final String machine = listOfMachines[i];
 		
 					threads[i] = new Thread() {
-						public void run() {				
+						public void run() {		
 							new DataGenerator(machine, hostname, pause, maxCount, me);
 						}
 					};
