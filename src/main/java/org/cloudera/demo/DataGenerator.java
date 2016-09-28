@@ -289,7 +289,7 @@ public class DataGenerator {
 	private String getCurrentDateAsUniqueID(String name, int start, int end) {
 		Calendar cal = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-		return name + sdf.format(cal.getTime()) + this.getRandom(start, end); 
+		return name + "-" + sdf.format(cal.getTime()) + "-" + this.getRandom(start, end); 
 	}
 	
 	private Date getCurrentDate() {
