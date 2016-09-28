@@ -61,7 +61,7 @@ public class DataGenerator {
 				EventObject e = new EventObject();
 				MessageElement m = Messages.get(k);
 				
-				String ID = this.getCurrentDateAsUniqueID(name);
+				String ID = this.getCurrentDateAsUniqueID(name, 1, 99999);
 					e.setID(ID);
 					e.setMachine(name);
 					e.setHost(host);
@@ -286,6 +286,12 @@ public class DataGenerator {
 		return name + sdf.format(cal.getTime()); 
 	}
 
+	private String getCurrentDateAsUniqueID(String name, int start, int end) {
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+		return name + sdf.format(cal.getTime()) + this.getRandom(start, end); 
+	}
+	
 	private Date getCurrentDate() {
 		Calendar cal = Calendar.getInstance();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
